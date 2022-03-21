@@ -16,14 +16,15 @@
  */
 
 #include <pthread.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
 
-#define QUEUE_SIZE 100  /// The size of the queue
-#define LOOP 10000     /// The number of work units every producer creates
-#define PRODUCER 1     /// The number of producers
-#define CONSUMER 1     /// The number of consumers
+#define QUEUE_SIZE 10  /// The size of the queue
+#define LOOP 100000     /// The number of work units every producer creates
+#define PRODUCER 3     /// The number of producers
+#define CONSUMER 24     /// The number of consumers
 
 int work_done = 0;  /// The total number of work units executed
 double average_time = 0;  /// The average time that the work unit waited in the queue
@@ -90,7 +91,30 @@ int main (int argc, char **argv){
         pthread_join (pro[p], NULL);
     }
 
-    printf("\n\nMean waiting time %.3f\n\n", average_time);
+    printf("Mean waiting time %.3f\n", average_time);
+
+
+    pthread_mutex_lock (fifo->mut);  // lock the mutex
+
+    // check if the queue has work pending
+    while (fifo->empty == 0){
+        // if not wait for a signal and give the lock to an other thread
+        printf("Waiting for empty signal\n");
+        pthread_cond_wait (fifo->notFull, fifo->mut);
+    }
+
+    pthread_mutex_unlock (fifo->mut);  // lock the mutex
+
+
+    // kill all the remaining consumer threads
+    for (int p = 0; p < CONSUMER; ++p) {
+        printf("%d\n", pthread_kill (con[p], SIGTERM));
+    }
+
+    // Wait for the cosnumer threads to exit
+    for (int p = 0; p < CONSUMER; ++p) {
+        pthread_join (con[p], NULL);
+    }
 
 //    printf("Deleting queue...\n\n");
     queueDelete(fifo);  // delete the queue for cleanup
