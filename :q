@@ -1,0 +1,20 @@
+Report diagrams
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Your branch is ahead of 'origin/main' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+# Changes to be committed:
+#	modified:   .gitignore
+#	new file:   report/prod_con_results.txt
+#	modified:   report/report.aux
+#	modified:   report/report.fdb_latexmk
+#	modified:   report/report.fls
+#	modified:   report/report.log
+#	modified:   report/report.pdf
+#	modified:   report/report.synctex.gz
+#	modified:   report/report.tex
+#	new file:   report/results.txt
+#

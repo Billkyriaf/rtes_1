@@ -6,7 +6,7 @@
 \usepackage{geometry}
 \usepackage{pgfplots}
 \usepackage{float}
-\usepackage{subfig}
+\usepackage{hyperref}
 
 % Hyphenation
 \hyphenpenalty 10000
@@ -23,6 +23,12 @@
 % plots
 \pgfplotsset{compat = newest}
 
+% links
+\hypersetup{
+    colorlinks=true,      
+    urlcolor=magenta,
+    }
+
 \begin{document}
     \maketitle
     
@@ -31,7 +37,7 @@
     The objective of this project is to measure and optimize the wait time of processes ready to execute
     using a FIFO queue for scheduling. The setup is simple, \(p\) threads are used as producers inserting 
     "work" in the queue and \(q\) threads representing consumers execute the work previously inserted in the 
-    queue.
+    queue. (Code on \href{http://www.overleaf.com}{GitHub})
 
     Three parameters can be altered to find the optimum number of consuming threads.
 
