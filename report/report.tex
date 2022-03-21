@@ -1,0 +1,73 @@
+\documentclass[a4paper, 12pt]{report}
+
+\usepackage[english]{babel}
+\usepackage{hyphenat}
+\usepackage{indentfirst}
+\usepackage{geometry}
+
+% Hyphenation
+\hyphenpenalty 10000
+\exhyphenpenalty 10000
+
+% Layout
+\geometry{a4paper, total={170mm,257mm}, left=25mm, top=30mm}
+
+% Cover page
+\title{\Large{\textbf{Wait Time in FIFO Queues}}}
+\author{Kyriafinis Vasilis, 9797}
+\date{March 11, 2022}
+
+
+
+\begin{document}
+    \maketitle
+    
+    \section*{Introduction}
+
+    The objective of this project is to measure and optimize the wait time of processes ready to execute
+    using a FIFO queue for scheduling. The setup is simple, \(p\) threads are used as producers inserting 
+    "work" in the queue and \(q\) threads representing consumers execute the work previously inserted in the 
+    queue.
+
+    There are 3 parameters that can be altered to find the optimum number of consuming threads.
+
+    \begin{enumerate}
+        \item Number of producers (\(p\)): The number of work producing threads.
+        \item Number of consumers (\(q\)): The number of work consuming threads.
+        \item Queue size: The maximum number of work units that can be pending at any given moment.
+    \end{enumerate}
+
+
+    \section*{Testing}
+
+    The computer used to run the tests has a \(Ryzen\) \(7\) \(5700G\) processor with 8 cores and 16 threads 
+    running at \(3.8\) \(GHz\). The goal for this experiment is to always keep the consuming threads busy. To achieve
+    this for the initial test the number of consumers and producers is the same. The consuming threads
+    are slower that the producing threads by design. This forces the queue to fill up.
+
+    \subsection*{Queue size}
+
+    In order to observe the effect of the queue size one producer and one consumer are created. Once the queue is
+    full no more work units are produced until the consuming thread executes a previously inserted unit.Because the
+    consuming thread is slower than the producing thread the bigger the queue size the bigger the wait time becomes.
+    \\
+    \\
+    \noindent INSERT GRAPH HERE
+
+    \subsection*{Producers Number}
+    
+    Given a queue size the number of producers must be a fraction of the consumer number. This is because if the 
+    producers are equal or more than the consumers the queue fills up and the producers stop creating more work.
+    For this reason initially only one producer is created. After defining the optimal number of consumers the 
+    $ \frac{producers}{consumers}$ fraction is determined. If this fraction is kept steady the wait time is 
+    relatively stable.
+
+    \subsection*{Consumers Number}
+
+    Finally starting from one consumer and increasing the number until the wait time stops decreasing the optimal 
+    number of consumer threads is determined. This number is always relative to the producers number.
+    \\
+    \\
+    \noindent INSERT GRAPH HERE
+
+\end{document}
