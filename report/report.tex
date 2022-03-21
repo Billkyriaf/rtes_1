@@ -4,6 +4,9 @@
 \usepackage{hyphenat}
 \usepackage{indentfirst}
 \usepackage{geometry}
+\usepackage{pgfplots}
+\usepackage{float}
+\usepackage{subfig}
 
 % Hyphenation
 \hyphenpenalty 10000
@@ -17,7 +20,8 @@
 \author{Kyriafinis Vasilis, 9797}
 \date{March 11, 2022}
 
-
+% plots
+\pgfplotsset{compat = newest}
 
 \begin{document}
     \maketitle
@@ -29,7 +33,7 @@
     "work" in the queue and \(q\) threads representing consumers execute the work previously inserted in the 
     queue.
 
-    There are 3 parameters that can be altered to find the optimum number of consuming threads.
+    Three parameters can be altered to find the optimum number of consuming threads.
 
     \begin{enumerate}
         \item Number of producers (\(p\)): The number of work producing threads.
@@ -43,22 +47,54 @@
     The computer used to run the tests has a \(Ryzen\) \(7\) \(5700G\) processor with 8 cores and 16 threads 
     running at \(3.8\) \(GHz\). The goal for this experiment is to always keep the consuming threads busy. To achieve
     this for the initial test the number of consumers and producers is the same. The consuming threads
-    are slower that the producing threads by design. This forces the queue to fill up.
+    are slower than the producing threads by design. This forces the queue to fill up.
 
     \subsection*{Queue size}
 
-    In order to observe the effect of the queue size one producer and one consumer are created. Once the queue is
-    full no more work units are produced until the consuming thread executes a previously inserted unit.Because the
+    To observe the effect of the queue size, one producer and one consumer are created. Once the queue is
+    full no more work units are produced until the consuming thread executes a previously inserted unit. Because the
     consuming thread is slower than the producing thread the bigger the queue size the bigger the wait time becomes.
     \\
-    \\
-    \noindent INSERT GRAPH HERE
+
+    \pgfplotstableread{results.txt}{\table}
+ 
+    \begin{figure}[H]\centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            title style={anchor=north,yshift=20},
+            title = {$1\ Producer,\ 1\ Consumer$},
+            xmin = 0, xmax = 100,
+            ymin = 0, ymax = 40,
+            xtick distance = 10,
+            ytick distance = 4,
+            grid = both,
+            minor tick num = 1,
+            major grid style = {lightgray},
+            minor grid style = {lightgray!25},
+            width = \textwidth,
+            height = 0.55\textwidth,
+            legend cell align = {left},
+            legend pos = north west,
+            xlabel = {$Queue\ size$},
+            ylabel = {$Wait\ time\ (sec)$},
+        ]
+        
+            \addplot[blue, mark = *] table [x = {x}, y = {y1}] {\table};
+            
+            \legend{
+                Wait time vs Queue size, 
+            }
+        
+        \end{axis}
+    
+    \end{tikzpicture}
+    \end{figure}
 
     \subsection*{Producers Number}
     
-    Given a queue size the number of producers must be a fraction of the consumer number. This is because if the 
+    Given a queue size, the number of producers must be a fraction of the consumer number. This is because if the 
     producers are equal or more than the consumers the queue fills up and the producers stop creating more work.
-    For this reason initially only one producer is created. After defining the optimal number of consumers the 
+    For this reason, initially, only one producer is created. After defining the optimal number of consumers the 
     $ \frac{producers}{consumers}$ fraction is determined. If this fraction is kept steady the wait time is 
     relatively stable.
 
@@ -67,7 +103,41 @@
     Finally starting from one consumer and increasing the number until the wait time stops decreasing the optimal 
     number of consumer threads is determined. This number is always relative to the producers number.
     \\
-    \\
-    \noindent INSERT GRAPH HERE
+    \pgfplotstableread{prod_con_results.txt}{\table}
+ 
+    \begin{figure}[H]\centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            title style={anchor=north,yshift=20},
+            title = {$1\ Producer,\ Queue\ size\ =\ 10$},            xmin = 0, xmax = 40,
+            ymin = 0, ymax = 4,
+            xtick distance = 4,
+            ytick distance = .5,
+            grid = both,
+            minor tick num = 1,
+            major grid style = {lightgray},
+            minor grid style = {lightgray!25},
+            width = \textwidth,
+            height = 0.55\textwidth,
+            legend cell align = {left},
+            legend pos = north west,
+            xlabel = {$Number\ of\ consumers$},
+            ylabel = {$Wait\ time\ (sec)$},
+        ]
+        
+            \addplot[blue, mark = *] table [x = {x}, y = {y1}] {\table};
+            
+            \legend{
+                Wait time vs Number of producers, 
+            }
+        
+        \end{axis}
+    
+    \end{tikzpicture}
+    \end{figure}
 
+    The graph above suggests that for every producer 8 consumers are required to keep an optimum configuration.
+    If more consumers are added the queue will be empty for the most time and consuming threads will wait for
+    producing threads to create new work. In contrast, if more producing threads are spawned the queue will be 
+    full for the most time and the waiting time will increase.
 \end{document}
